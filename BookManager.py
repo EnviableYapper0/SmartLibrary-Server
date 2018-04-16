@@ -4,14 +4,13 @@ from model import Book
 class BookManager(object):
     def get_all_books(self):
         book_list = []
-        for book in Book.select():
 
+        for book in Book.select():
             book_list.append(book)
 
         return book_list
 
     def add_book(self, json_data):
-        print(json_data)
         return Book.create(**json_data)
 
     def get_book(self, book_id):
