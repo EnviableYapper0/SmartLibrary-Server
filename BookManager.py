@@ -20,5 +20,5 @@ class BookManager(object):
         if 'id' in json_data and json_data['id'] != book_id:
             raise IndexError("Id mismatched.")
 
-        Book.update(**json_data).where(Book.id == book_id)
+        Book.update(**json_data).where(Book.id == book_id).execute()
         return self.get_book(book_id)

@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_restful import Api
 from BookCrud import BookListCurd, BookCurd
-from model import Book
+from UserCrud import UserListCurd, UserCurd
+from model import Book, User
 
 app = Flask(__name__)
 api = Api(app)
@@ -14,7 +15,10 @@ def hello_world():
 
 api.add_resource(BookListCurd, '/book')
 api.add_resource(BookCurd, '/book/<book_id>')
+api.add_resource(UserListCurd, '/user')
+api.add_resource(UserCurd, '/user/<user_id>')
 
 if __name__ == '__main__':
     Book.create_table()
+    User.create_table()
     app.run()

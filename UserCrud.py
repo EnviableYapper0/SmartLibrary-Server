@@ -3,7 +3,7 @@ from flask_restful.reqparse import request
 
 from UserManager import UserManager
 
-book_fields = {
+user_fields = {
     'id': fields.Integer,
     'name': fields.String,
     'registered_on': fields.DateTime(dt_format='rfc822'),
@@ -16,23 +16,23 @@ class AbstractUserCurd(Resource):
         self.user_manager = UserManager()
 
 
-class BookListCurd(AbstractUserCurd):
-    @marshal_with(book_fields, envelope='resource')
+class UserListCurd(AbstractUserCurd):
+    @marshal_with(user_fields, envelope='resource')
     def get(self):
         return self.user_manager.get_all_user()
 
-    @marshal_with(book_fields, envelope='resource')
+    @marshal_with(user_fields, envelope='resource')
     def post(self):
         args = request.get_json()
         return self.user_manager.register_new_user(args), 201
 
 
-class BookCurd(AbstractUserCurd):
-    @marshal_with(book_fields, envelope='resource')
+class UserCurd(AbstractUserCurd):
+    @marshal_with(user_fields, envelope='resource')
     def get(self, user_id):
         return self.user_manager.get_specific_user(user_id)
 
-    @marshal_with(book_fields, envelope='resource')
+    @marshal_with(user_fields, envelope='resource')
     def put(self, user_id):
         args = request.get_json()
         return self.user_manager.update_user_data(user_id, args)

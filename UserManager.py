@@ -6,7 +6,7 @@ class UserManager(object):
         user_list = []
 
         for user in User.select():
-            user_list.append(user_list)
+            user_list.append(user)
 
         return user_list
 
@@ -20,5 +20,5 @@ class UserManager(object):
         if 'id' in json_data and json_data['id'] != user_id:
             raise IndexError("Id mismatched.")
 
-        User.update(**json_data).where(User.id == user_id)
+        User.update(**json_data).where(User.id == user_id).execute()
         return self.get_specific_user(user_id)
