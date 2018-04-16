@@ -13,6 +13,7 @@ class Book(BaseModel):
     name = TextField()
     isbn = CharField(max_length=20)
     added_on = DateTimeField(default=datetime.now)
+    rfid = CharField(null=True, default=None)
     is_available = BooleanField(default=True)
 
 
@@ -20,6 +21,7 @@ class User(BaseModel):
     id = AutoField(primary_key=True)
     name = TextField()
     registered_on = DateTimeField(default=datetime.now)
+    rfid = CharField(null=True, default=None)
     is_active = BooleanField(default=True)
 
 
