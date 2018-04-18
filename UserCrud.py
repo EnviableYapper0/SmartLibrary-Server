@@ -1,5 +1,5 @@
 from flask_restful import Resource, fields, marshal_with
-from flask_restful.reqparse import request
+from flask import request
 
 from UserManager import UserManager
 
@@ -17,22 +17,22 @@ class AbstractUserCurd(Resource):
 
 
 class UserListCurd(AbstractUserCurd):
-    @marshal_with(user_fields, envelope='resource')
+    @marshal_with(user_fields)
     def get(self):
         return self.user_manager.get_all_user()
 
-    @marshal_with(user_fields, envelope='resource')
+    @marshal_with(user_fields)
     def post(self):
         args = request.get_json()
         return self.user_manager.register_new_user(args), 201
 
 
 class UserCurd(AbstractUserCurd):
-    @marshal_with(user_fields, envelope='resource')
+    @marshal_with(user_fields)
     def get(self, user_id):
         return self.user_manager.get_specific_user(user_id)
 
-    @marshal_with(user_fields, envelope='resource')
+    @marshal_with(user_fields)
     def put(self, user_id):
         args = request.get_json()
         return self.user_manager.update_user_data(user_id, args)
