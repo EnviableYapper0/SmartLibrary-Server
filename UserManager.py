@@ -2,6 +2,9 @@ from model import User
 
 
 class UserManager(object):
+    def __init__(self):
+        User.create_table()
+
     def get_all_user(self):
         user_list = []
 

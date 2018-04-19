@@ -2,6 +2,9 @@ from model import Book
 
 
 class BookManager(object):
+    def __init__(self):
+        Book.create_table()
+
     def get_all_books(self):
         book_list = []
 

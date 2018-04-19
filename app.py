@@ -22,7 +22,4 @@ api.add_resource(BorrowApi, '/borrow')
 api.add_resource(ReturnApi, '/return/<borrow_id>')
 
 if __name__ == '__main__':
-    Book.create_table()
-    User.create_table()
-    BookCirculation.create_table()
     app.run()

@@ -5,6 +5,9 @@ from datetime import datetime
 
 
 class BookCirculationManager:
+    def __init__(self):
+        BookCirculation.create_table()
+
     def get_complete_history(self):
         complete_history = []
 
