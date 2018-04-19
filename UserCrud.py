@@ -36,3 +36,9 @@ class UserCurd(AbstractUserCurd):
     def put(self, user_id):
         args = request.get_json()
         return self.user_manager.update_user_data(user_id, args)
+
+
+class UserRfidCurd(AbstractUserCurd):
+    @marshal_with(user_fields)
+    def get(self, rfid):
+        return self.user_manager.get_user_by_rfid(rfid)

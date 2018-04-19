@@ -9,19 +9,20 @@ class BaseModel(Model):
 
 
 class Book(BaseModel):
-    id = AutoField(primary_key=True)
+    id = AutoField(primary_key=True, unique=True)
     name = TextField()
-    isbn = CharField(max_length=20)
+    isbn = CharField(max_length=20, unique=True)
     added_on = DateTimeField(default=datetime.now)
-    rfid = CharField(null=True, default=None)
+    rfid = CharField(null=True, default=None, unique=True)
     is_available = BooleanField(default=True)
 
 
 class User(BaseModel):
-    id = AutoField(primary_key=True)
+    id = AutoField(primary_key=True, unique=True)
     name = TextField()
     registered_on = DateTimeField(default=datetime.now)
-    rfid = CharField(null=True, default=None)
+    line_token = CharField(null=True, default=None)
+    rfid = CharField(null=True, default=None, unique=True)
     is_active = BooleanField(default=True)
 
 

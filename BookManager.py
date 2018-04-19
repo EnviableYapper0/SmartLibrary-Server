@@ -19,6 +19,9 @@ class BookManager(object):
     def get_book(self, book_id):
         return Book.get_by_id(book_id)
 
+    def get_book_by_rfid(self, rfid):
+        return Book.get(Book.rfid == rfid)
+
     def update_book_data(self, book_id, json_data):
         if 'id' in json_data and json_data['id'] != book_id:
             raise IndexError("Id mismatched.")

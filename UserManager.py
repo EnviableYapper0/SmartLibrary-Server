@@ -19,6 +19,9 @@ class UserManager(object):
     def get_specific_user(self, user_id):
         return User.get_by_id(user_id)
 
+    def get_user_by_rfid(self, rfid):
+        return User.get(User.rfid == rfid)
+
     def update_user_data(self, user_id, json_data):
         if 'id' in json_data and json_data['id'] != user_id:
             raise IndexError("Id mismatched.")

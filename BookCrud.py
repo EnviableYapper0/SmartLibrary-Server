@@ -37,3 +37,9 @@ class BookCurd(AbstractBookCurd):
     def put(self, book_id):
         args = request.get_json()
         return self.book_manager.update_book_data(book_id, args)
+
+
+class BookRfidCurd(AbstractBookCurd):
+    @marshal_with(book_fields)
+    def get(self, rfid):
+        return self.book_manager.get_book_by_rfid(rfid)
