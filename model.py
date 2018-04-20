@@ -23,6 +23,7 @@ class User(BaseModel):
     registered_on = DateTimeField(default=datetime.now)
     line_token = CharField(null=True, default=None)
     rfid = CharField(null=True, default=None, unique=True)
+    email = CharField(null=True, default=None)
     is_active = BooleanField(default=True)
 
 
