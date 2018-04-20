@@ -1,5 +1,5 @@
 from peewee import *
-from datetime import datetime
+from datetime import datetime, timedelta
 from Database import database
 
 
@@ -27,12 +27,22 @@ class User(BaseModel):
     is_active = BooleanField(default=True)
 
 
+# Workaround: BookCirculations due_time cannot detect the function if its part of itself
+def default_return_time():
+    return BookCirculation.default_return_time()
+
+
 class BookCirculation(BaseModel):
     id = AutoField(primary_key=True)
     book = ForeignKeyField(Book, backref='circulation_history')
     user = ForeignKeyField(User, backref='borrow_history')
-    borrow_time = DateTimeField(default=datetime.now)
+    borrow_time = DateTimeField(null=False, default=datetime.now)
+    due_time = DateTimeField(null=False, default=default_return_time)
     return_time = DateTimeField(null=True, default=None)
 
     def is_returned(self):
         return not self.borrow_time.is_null()
+
+    @staticmethod
+    def default_return_time():
+        return datetime.now() + timedelta(days=7)
