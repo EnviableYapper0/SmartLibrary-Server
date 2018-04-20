@@ -7,6 +7,7 @@ user_fields = {
     'id': fields.Integer,
     'name': fields.String,
     'registered_on': fields.DateTime(dt_format='rfc822'),
+    'email': fields.String,
     'is_active': fields.Boolean,
 }
 

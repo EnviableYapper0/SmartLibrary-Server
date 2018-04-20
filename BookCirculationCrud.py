@@ -9,6 +9,7 @@ book_circulation_fields = {
     'book': fields.Nested(book_fields),
     'user': fields.Nested(user_fields),
     'borrow_time': fields.DateTime(dt_format='rfc822'),
+    'due_time': fields.DateTime(dt_format='rfc822'),
     'return_time': fields.DateTime(dt_format='rfc822'),
 }
 
