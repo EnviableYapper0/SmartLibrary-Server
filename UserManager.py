@@ -1,8 +1,10 @@
 from model import User
+from Database import database
 
 
 class UserManager(object):
     def __init__(self):
+        database.connect()
         User.create_table()
 
     def get_all_user(self):
@@ -28,3 +30,6 @@ class UserManager(object):
 
         User.update(**json_data).where(User.id == user_id).execute()
         return self.get_specific_user(user_id)
+
+    def __del__(self):
+        database.close()

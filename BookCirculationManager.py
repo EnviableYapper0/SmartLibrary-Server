@@ -1,11 +1,13 @@
 from model import BookCirculation
 from BookManager import BookManager
 from UserManager import UserManager
+from Database import database
 from datetime import datetime
 
 
 class BookCirculationManager:
     def __init__(self):
+        database.connect()
         BookCirculation.create_table()
 
     def get_complete_history(self):
@@ -38,3 +40,6 @@ class BookCirculationManager:
     def return_book(self, borrow_id, return_time=datetime.now()):
         BookCirculation.update(return_time=return_time).where(BookCirculation.id==borrow_id).execute()
         return self.get_specific_record(borrow_id)
+
+    def __del__(self):
+        database.close()

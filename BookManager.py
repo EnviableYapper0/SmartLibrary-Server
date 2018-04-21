@@ -1,8 +1,10 @@
 from model import Book
+from Database import database
 
 
 class BookManager(object):
     def __init__(self):
+        database.connect()
         Book.create_table()
 
     def get_all_books(self):
@@ -28,3 +30,6 @@ class BookManager(object):
 
         Book.update(**json_data).where(Book.id == book_id).execute()
         return self.get_book(book_id)
+
+    def __del__(self):
+        database.close()
