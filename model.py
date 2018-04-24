@@ -19,7 +19,7 @@ class Book(BaseModel):
 
 class User(BaseModel):
     id = AutoField(primary_key=True, unique=True)
-    name = TextField()
+    title = TextField()
     registered_on = DateTimeField(default=datetime.now)
     line_token = CharField(null=True, default=None)
     rfid = CharField(null=True, default=None, unique=True)
