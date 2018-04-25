@@ -5,7 +5,7 @@ from BookManager import BookManager
 
 book_fields = {
     'id': fields.Integer,
-    'name': fields.String,
+    'title': fields.String,
     'isbn': fields.String,
     'added_on': fields.DateTime(dt_format='rfc822'),
     'is_available': fields.Boolean,
