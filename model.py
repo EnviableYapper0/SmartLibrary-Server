@@ -10,7 +10,7 @@ class BaseModel(Model):
 
 class Book(BaseModel):
     id = AutoField(primary_key=True, unique=True)
-    name = TextField()
+    title = TextField()
     isbn = CharField(max_length=20, unique=True)
     added_on = DateTimeField(default=datetime.now)
     rfid = CharField(null=True, default=None, unique=True)
