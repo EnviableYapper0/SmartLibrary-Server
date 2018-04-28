@@ -1,7 +1,7 @@
 from flask_restful import Resource, fields, marshal_with
 from flask import request
 
-from BookManager import BookManager
+from Manager.BookManager import BookManager
 
 book_fields = {
     'id': fields.Integer,

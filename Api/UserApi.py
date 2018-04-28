@@ -1,7 +1,7 @@
 from flask_restful import Resource, fields, marshal_with
 from flask import request
 
-from UserManager import UserManager
+from Manager.UserManager import UserManager
 
 user_fields = {
     'id': fields.Integer,

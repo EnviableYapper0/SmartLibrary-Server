@@ -1,8 +1,8 @@
-from BookCirculationManager import BookCirculationManager
+from Manager.BookCirculationManager import BookCirculationManager
 from flask_restful import Resource, fields, marshal_with
 from flask import request
-from BookApi import book_fields
-from UserApi import user_fields
+from Api.BookApi import book_fields
+from Api.UserApi import user_fields
 
 book_circulation_fields = {
     'id': fields.Integer,

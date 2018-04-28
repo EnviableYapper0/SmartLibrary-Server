@@ -2,9 +2,9 @@ from flask import Flask
 from flask_restful import Api
 from peewee import IntegrityError
 
-from BookCirculationApi import BorrowApi, ReturnApi
-from BookApi import BookListApi, BookApi, BookRfidApi
-from UserApi import UserListApi, UserApi, UserRfidApi
+from Api.BookCirculationApi import BorrowApi, ReturnApi
+from Api.BookApi import BookListApi, BookApi, BookRfidApi
+from Api.UserApi import UserListApi, UserApi, UserRfidApi
 import error_handler
 
 app = Flask(__name__)

@@ -1,6 +1,6 @@
 from model import BookCirculation
-from BookManager import BookManager
-from UserManager import UserManager
+from Manager.BookManager import BookManager
+from Manager.UserManager import UserManager
 from Database import database
 from datetime import datetime
 
