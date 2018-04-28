@@ -1,8 +1,8 @@
 from BookCirculationManager import BookCirculationManager
 from flask_restful import Resource, fields, marshal_with
 from flask import request
-from BookCrud import book_fields
-from UserCrud import user_fields
+from BookApi import book_fields
+from UserApi import user_fields
 
 book_circulation_fields = {
     'id': fields.Integer,
@@ -14,19 +14,19 @@ book_circulation_fields = {
 }
 
 
-class AbstractCirculationCurd(Resource):
+class AbstractCirculationApi(Resource):
     def __init__(self):
         self.book_circulation_manager = BookCirculationManager()
 
 
-class BorrowApi(AbstractCirculationCurd):
+class BorrowApi(AbstractCirculationApi):
     @marshal_with(book_circulation_fields)
     def post(self):
         args = request.get_json()
         return self.book_circulation_manager.borrow(args)
 
 
-class ReturnApi(AbstractCirculationCurd):
+class ReturnApi(AbstractCirculationApi):
     @marshal_with(book_circulation_fields)
     def put(self, borrow_id):
         args = request.get_json()

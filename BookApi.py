@@ -12,12 +12,12 @@ book_fields = {
 }
 
 
-class AbstractBookCurd(Resource):
+class AbstractBookApi(Resource):
     def __init__(self):
         self.book_manager = BookManager()
 
 
-class BookListCurd(AbstractBookCurd):
+class BookListApi(AbstractBookApi):
     @marshal_with(book_fields)
     def get(self):
         return self.book_manager.get_all_books()
@@ -28,7 +28,7 @@ class BookListCurd(AbstractBookCurd):
         return self.book_manager.add_book(args), 201
 
 
-class BookCurd(AbstractBookCurd):
+class BookApi(AbstractBookApi):
     @marshal_with(book_fields)
     def get(self, book_id):
         return self.book_manager.get_book(book_id)
@@ -39,7 +39,7 @@ class BookCurd(AbstractBookCurd):
         return self.book_manager.update_book_data(book_id, args)
 
 
-class BookRfidCurd(AbstractBookCurd):
+class BookRfidApi(AbstractBookApi):
     @marshal_with(book_fields)
     def get(self, rfid):
         return self.book_manager.get_book_by_rfid(rfid)

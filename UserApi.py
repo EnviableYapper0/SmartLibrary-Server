@@ -12,12 +12,12 @@ user_fields = {
 }
 
 
-class AbstractUserCurd(Resource):
+class AbstractUserApi(Resource):
     def __init__(self):
         self.user_manager = UserManager()
 
 
-class UserListCurd(AbstractUserCurd):
+class UserListApi(AbstractUserApi):
     @marshal_with(user_fields)
     def get(self):
         return self.user_manager.get_all_user()
@@ -28,7 +28,7 @@ class UserListCurd(AbstractUserCurd):
         return self.user_manager.register_new_user(args), 201
 
 
-class UserCurd(AbstractUserCurd):
+class UserApi(AbstractUserApi):
     @marshal_with(user_fields)
     def get(self, user_id):
         return self.user_manager.get_specific_user(user_id)
@@ -39,7 +39,7 @@ class UserCurd(AbstractUserCurd):
         return self.user_manager.update_user_data(user_id, args)
 
 
-class UserRfidCurd(AbstractUserCurd):
+class UserRfidApi(AbstractUserApi):
     @marshal_with(user_fields)
     def get(self, rfid):
         return self.user_manager.get_user_by_rfid(rfid)
