@@ -19,7 +19,7 @@ class Book(BaseModel):
 
 class User(BaseModel):
     id = AutoField(primary_key=True, unique=True)
-    title = TextField()
+    name = TextField()
     registered_on = DateTimeField(default=datetime.now)
     line_token = CharField(null=True, default=None)
     rfid = CharField(null=True, default=None, unique=True)
@@ -27,18 +27,17 @@ class User(BaseModel):
     is_active = BooleanField(default=True)
 
 
-# Workaround: BookCirculations due_time cannot detect the function if its part of itself
-def default_return_time():
-    return BookCirculation.default_return_time()
-
-
 class BookCirculation(BaseModel):
     id = AutoField(primary_key=True)
     book = ForeignKeyField(Book, backref='circulation_history')
     user = ForeignKeyField(User, backref='borrow_history')
     borrow_time = DateTimeField(null=False, default=datetime.now)
-    due_time = DateTimeField(null=False, default=default_return_time)
+    due_time = DateTimeField(null=False, default=datetime.now)
     return_time = DateTimeField(null=True, default=None)
+    
+    def __init__(self):
+        BaseModel.__init__(self)
+        self.due_time = BookCirculation.default_return_time()
 
     def is_returned(self):
         return not self.borrow_time.is_null()
