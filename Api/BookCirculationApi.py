@@ -5,7 +5,7 @@ from Api.BookApi import book_fields
 from Api.UserApi import user_fields
 
 book_circulation_fields = {
-    'id': fields.Integer,
+    'borrow_id': fields.Integer,
     'book': fields.Nested(book_fields),
     'user': fields.Nested(user_fields),
     'borrow_time': fields.DateTime(dt_format='rfc822'),

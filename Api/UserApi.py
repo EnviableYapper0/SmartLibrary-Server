@@ -4,7 +4,7 @@ from flask import request
 from Manager.UserManager import UserManager
 
 user_fields = {
-    'id': fields.Integer,
+    'user_id': fields.Integer,
     'name': fields.String,
     'registered_on': fields.DateTime(dt_format='rfc822'),
     'email': fields.String,
