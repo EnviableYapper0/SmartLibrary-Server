@@ -4,7 +4,7 @@ from flask import request
 from Manager.BookManager import BookManager
 
 book_fields = {
-    'id': fields.Integer,
+    'book_id': fields.Integer,
     'title': fields.String,
     'isbn': fields.String,
     'added_on': fields.DateTime(dt_format='rfc822'),

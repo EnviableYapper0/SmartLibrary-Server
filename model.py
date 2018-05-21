@@ -9,7 +9,7 @@ class BaseModel(Model):
 
 
 class Book(BaseModel):
-    id = AutoField(primary_key=True, unique=True)
+    book_id = AutoField(primary_key=True, unique=True)
     title = TextField()
     isbn = CharField(max_length=20, unique=True)
     added_on = DateTimeField(default=datetime.now)
@@ -18,7 +18,7 @@ class Book(BaseModel):
 
 
 class User(BaseModel):
-    id = AutoField(primary_key=True, unique=True)
+    user_id = AutoField(primary_key=True, unique=True)
     name = TextField()
     registered_on = DateTimeField(default=datetime.now)
     line_token = CharField(null=True, default=None)
@@ -28,7 +28,7 @@ class User(BaseModel):
 
 
 class BookCirculation(BaseModel):
-    id = AutoField(primary_key=True)
+    borrow_id = AutoField(primary_key=True)
     book = ForeignKeyField(Book, backref='circulation_history')
     user = ForeignKeyField(User, backref='borrow_history')
     borrow_time = DateTimeField(null=False, default=datetime.now)
