@@ -35,9 +35,10 @@ class BookCirculation(BaseModel):
     due_time = DateTimeField(null=False, default=datetime.now)
     return_time = DateTimeField(null=True, default=None)
     
-    def __init__(self):
-        BaseModel.__init__(self)
-        self.due_time = BookCirculation.default_return_time()
+    def __init__(self, **kwargs):
+        BaseModel.__init__(self, **kwargs)
+        if "due_time" not in kwargs.keys():
+            self.due_time = BookCirculation.default_return_time()
 
     def is_returned(self):
         return not self.borrow_time.is_null()

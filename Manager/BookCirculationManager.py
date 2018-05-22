@@ -1,6 +1,4 @@
-from model import BookCirculation
-from Manager.BookManager import BookManager
-from Manager.UserManager import UserManager
+from model import BookCirculation, Book, User
 from Database import database
 from datetime import datetime
 
@@ -29,16 +27,22 @@ class BookCirculationManager:
     def get_specific_record(self, borrow_id):
         return BookCirculation.get_by_id(borrow_id)
 
-    def borrow(self, json_data):
-        book = BookManager().get_book(json_data['book']['id'])
-        user = UserManager().get_specific_user(json_data['user']['id'])
-        del json_data['book']
-        del json_data['user']
+    def borrows(self, dataList):
+        successful_borrows = []
 
-        return BookCirculation.create(book=book, user=user, **json_data)
+        with database.atomic():
+            for data in dataList:
+                book = Book.get_by_id(data["book"]["book_id"])
+                user = User.get_by_id(data["user"]["user_id"])
+                data['book'] = book
+                data['user'] = user
+
+                successful_borrows.append(BookCirculation.create(**data))
+
+        return successful_borrows
 
     def return_book(self, borrow_id, return_time=datetime.now()):
-        BookCirculation.update(return_time=return_time).where(BookCirculation.id==borrow_id).execute()
+        BookCirculation.update(return_time=return_time).where(BookCirculation.borrow_id == borrow_id).execute()
         return self.get_specific_record(borrow_id)
 
     def __del__(self):
