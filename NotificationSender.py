@@ -12,10 +12,6 @@ class NotificationSender(metaclass=abc.ABCMeta):
     def notify_book_in_circulation(self):
         raise NotImplemented()
 
-    @abc.abstractmethod
-    def notify_successful_book_borrow(self, new_borrows):
-        raise NotImplemented()
-
     @staticmethod
     def compose_successful_book_borrow(new_borrows):
         user = new_borrows[0].user
@@ -64,6 +60,7 @@ class NotificationSender(metaclass=abc.ABCMeta):
 
 
 class EmailSender(NotificationSender):
+
     def __init__(self):
         NotificationSender.__init__(self)
         self.smtp = SMTP(host='smtp.mailtrap.io', port=2525)
