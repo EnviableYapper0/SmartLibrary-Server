@@ -1,6 +1,6 @@
 from threading import Thread
 
-from NotificationSender import EmailSender
+from NotificationSender import EmailSender, LineSender
 from model import BookCirculation, Book, User
 from Database import database
 from datetime import datetime
@@ -61,5 +61,7 @@ class SendBorrowNotification(Thread):
         self.new_borrows = new_borrows
 
     def run(self):
-        notification_senders = EmailSender()
-        notification_senders.notify_successful_book_borrows(self.new_borrows)
+        notification_senders = [EmailSender(), LineSender()]
+
+        for notification_sender in notification_senders:
+            notification_sender.notify_successful_book_borrows(self.new_borrows)

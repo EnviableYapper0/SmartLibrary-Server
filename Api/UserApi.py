@@ -43,3 +43,9 @@ class UserRfidApi(AbstractUserApi):
     @marshal_with(user_fields)
     def get(self, rfid):
         return self.user_manager.get_user_by_rfid(rfid)
+
+
+class UserLineApi(AbstractUserApi):
+    def put(self, user_id):
+        arg = request.get_json()
+        self.user_manager.update_user_line_token(user_id, arg['line_token'])
