@@ -1,9 +1,13 @@
+from threading import Thread
+
+from NotificationSender import EmailSender
 from model import BookCirculation, Book, User
 from Database import database
 from datetime import datetime
 
 
 class BookCirculationManager:
+
     def __init__(self):
         database.connect()
         BookCirculation.create_table()
@@ -39,6 +43,8 @@ class BookCirculationManager:
 
                 successful_borrows.append(BookCirculation.create(**data))
 
+        SendBorrowNotification(successful_borrows).start()
+
         return successful_borrows
 
     def return_book(self, borrow_id, return_time=datetime.now()):
@@ -47,3 +53,13 @@ class BookCirculationManager:
 
     def __del__(self):
         database.close()
+
+
+class SendBorrowNotification(Thread):
+    def __init__(self, new_borrows):
+        Thread.__init__(self)
+        self.new_borrows = new_borrows
+
+    def run(self):
+        notification_senders = EmailSender()
+        notification_senders.notify_successful_book_borrows(self.new_borrows)
