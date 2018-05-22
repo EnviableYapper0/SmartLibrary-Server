@@ -1,6 +1,9 @@
 import abc
+import requests
 from email.message import EmailMessage
 from smtplib import SMTP
+
+LINE_NOTIFY_URL = 'https://notify-api.line.me/api/notify'
 
 
 class NotificationSender(metaclass=abc.ABCMeta):
@@ -98,14 +101,42 @@ class EmailSender(NotificationSender):
         self.smtp.close()
 
 
+class LineSender(NotificationSender):
+
+    def notify_successful_book_borrows(self, new_borrows):
+        user = new_borrows[0].user
+
+        if user.line_token is None:
+            return
+
+        self.send_line_message(user.line_token, self.compose_successful_book_borrow(new_borrows))
+
+    def notify_book_in_circulation(self):
+        query = BookCirculation.select().group_by(BookCirculation.user). \
+            having((BookCirculation.user.line_token is not None) | (BookCirculation.return_time is None))
+
+        messages_to_send = NotificationSender.compose_book_in_circulation(query)
+
+        for user, message in messages_to_send:
+            self.send_line_message(user.line_token, message)
+
+    @staticmethod
+    def send_line_message(token, message):
+        headers = {'content-type': 'application/x-www-form-urlencoded', 'Authorization': 'Bearer ' + token}
+        requests.post(LINE_NOTIFY_URL, headers=headers, data={'message': message})
+
+
 if __name__ == '__main__':
     from model import *
     book1 = Book(id=1, title="Windows 10 Plain & Simple, 2nd Edition", isbn="978-1-5093-0673-2")
     book2 = Book(id=2, title="Beyond Bullet Points: Using PowerPoint to tell a compelling story that gets results, "
                              "4th Edition", isbn="978-1-5093-0553-7")
-    user1 = User(id=1, name="John Doe", email="johndoe@awsomejoe.com")
+    user1 = User(id=1, name="John Doe", email="johndoe@awsomejoe.com",
+                 line_token="ycrnAC5g1ekyjeF925i0gNbZQMuZWQ2MkIjIEzYBsZ3")
 
     book_circulations = [BookCirculation(book=book1, user=user1), BookCirculation(book=book2, user=user1)]
 
     email_sender = EmailSender()
+    line_sender = LineSender()
     email_sender.notify_successful_book_borrows(book_circulations)
+    line_sender.notify_successful_book_borrows(book_circulations)

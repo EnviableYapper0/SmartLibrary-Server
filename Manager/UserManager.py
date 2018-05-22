@@ -31,5 +31,8 @@ class UserManager(object):
         User.set_by_id(user_id, json_data)
         return self.get_specific_user(user_id)
 
+    def update_user_line_token(self, user_id, line_token):
+        User.set_by_id(user_id, {'line_token': line_token})
+
     def __del__(self):
         database.close()
