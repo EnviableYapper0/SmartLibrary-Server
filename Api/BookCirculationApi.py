@@ -23,7 +23,7 @@ class BorrowApi(AbstractCirculationApi):
     @marshal_with(book_circulation_fields)
     def post(self):
         args = request.get_json()
-        return self.book_circulation_manager.borrow(args)
+        return self.book_circulation_manager.borrows(args)
 
 
 class ReturnApi(AbstractCirculationApi):
