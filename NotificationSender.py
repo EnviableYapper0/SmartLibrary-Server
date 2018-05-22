@@ -1,18 +1,19 @@
+import abc
 from email.message import EmailMessage
 from smtplib import SMTP
-import abc
-from datetime import datetime
-
-from model import BookCirculation
 
 
 class NotificationSender(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def notify_successful_book_borrow(self, new_borrows):
+    def notify_successful_book_borrows(self, new_borrows):
         raise NotImplemented()
 
     @abc.abstractmethod
     def notify_book_in_circulation(self):
+        raise NotImplemented()
+
+    @abc.abstractmethod
+    def notify_successful_book_borrow(self, new_borrows):
         raise NotImplemented()
 
     @staticmethod
@@ -62,12 +63,13 @@ class NotificationSender(metaclass=abc.ABCMeta):
         return content + "\n\nSmartLibrary Staff"
 
 
-class EmailSender:
+class EmailSender(NotificationSender):
     def __init__(self):
+        NotificationSender.__init__(self)
         self.smtp = SMTP(host='smtp.mailtrap.io', port=2525)
         self.smtp.login('3f534eda171e91', '3ab5f8fea23d28')
 
-    def notify_successful_book_borrow(self, new_borrows):
+    def notify_successful_book_borrows(self, new_borrows):
         user = new_borrows[0].user
 
         email_content = NotificationSender.compose_successful_book_borrow(new_borrows)
@@ -98,6 +100,7 @@ class EmailSender:
     def __del__(self):
         self.smtp.close()
 
+
 if __name__ == '__main__':
     from model import *
     book1 = Book(id=1, title="Windows 10 Plain & Simple, 2nd Edition", isbn="978-1-5093-0673-2")
@@ -108,4 +111,4 @@ if __name__ == '__main__':
     book_circulations = [BookCirculation(book=book1, user=user1), BookCirculation(book=book2, user=user1)]
 
     email_sender = EmailSender()
-    email_sender.notify_successful_book_borrow(book_circulations)
+    email_sender.notify_successful_book_borrows(book_circulations)
