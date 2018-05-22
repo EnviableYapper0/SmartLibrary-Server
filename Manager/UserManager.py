@@ -25,10 +25,10 @@ class UserManager(object):
         return User.get(User.rfid == rfid)
 
     def update_user_data(self, user_id, json_data):
-        if 'id' in json_data and json_data['id'] != user_id:
+        if 'user_id' in json_data.keys() and json_data['user_id'] != user_id:
             raise IndexError("Id mismatched.")
 
-        User.update(**json_data).where(User.id == user_id).execute()
+        User.set_by_id(user_id, json_data)
         return self.get_specific_user(user_id)
 
     def __del__(self):

@@ -25,10 +25,10 @@ class BookManager(object):
         return Book.get(Book.rfid == rfid)
 
     def update_book_data(self, book_id, json_data):
-        if 'id' in json_data and json_data['id'] != book_id:
+        if 'book_id' in json_data.keys() and json_data['book_id'] != book_id:
             raise IndexError("Id mismatched.")
 
-        Book.update(**json_data).where(Book.id == book_id).execute()
+        row_changed = Book.set_by_id(book_id, json_data)
         return self.get_book(book_id)
 
     def __del__(self):

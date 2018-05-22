@@ -11,11 +11,12 @@ class BaseModel(Model):
 class Book(BaseModel):
     book_id = AutoField(primary_key=True, unique=True)
     title = TextField()
-    isbn = CharField(max_length=20, unique=True)
+    isbn = CharField(max_length=20)
+    author = TextField(null=True)
+    publisher = TextField(null=True)
     added_on = DateTimeField(default=datetime.now)
     rfid = CharField(null=True, default=None, unique=True)
     is_available = BooleanField(default=True)
-
 
 class User(BaseModel):
     user_id = AutoField(primary_key=True, unique=True)
