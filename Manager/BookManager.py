@@ -1,10 +1,10 @@
+from Manager.DatabaseManager import DatabaseManager
 from model import Book
-from Database import database
 
 
-class BookManager(object):
+class BookManager(DatabaseManager):
     def __init__(self):
-        database.connect()
+        DatabaseManager.__init__(self)
         Book.create_table()
 
     def get_all_books(self):
@@ -30,6 +30,3 @@ class BookManager(object):
 
         row_changed = Book.set_by_id(book_id, json_data)
         return self.get_book(book_id)
-
-    def __del__(self):
-        database.close()

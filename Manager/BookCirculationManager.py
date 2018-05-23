@@ -1,15 +1,15 @@
 from threading import Thread
 
+from Manager.DatabaseManager import DatabaseManager
 from NotificationSender import EmailSender, LineSender
 from model import BookCirculation, Book, User
-from Database import database
 from datetime import datetime
 
 
-class BookCirculationManager:
+class BookCirculationManager(DatabaseManager):
 
     def __init__(self):
-        database.connect()
+        DatabaseManager.__init__(self)
         BookCirculation.create_table()
 
     def get_complete_history(self):
@@ -34,7 +34,7 @@ class BookCirculationManager:
     def borrows(self, dataList):
         successful_borrows = []
 
-        with database.atomic():
+        with self.db.atomic():
             for data in dataList:
                 book = Book.get_by_id(data["book"]["book_id"])
                 user = User.get_by_id(data["user"]["user_id"])
@@ -50,9 +50,6 @@ class BookCirculationManager:
     def return_book(self, borrow_id, return_time=datetime.now()):
         BookCirculation.update(return_time=return_time).where(BookCirculation.borrow_id == borrow_id).execute()
         return self.get_specific_record(borrow_id)
-
-    def __del__(self):
-        database.close()
 
 
 class SendBorrowNotification(Thread):

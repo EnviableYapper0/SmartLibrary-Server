@@ -1,10 +1,11 @@
+from Manager.DatabaseManager import DatabaseManager
 from model import User
 from Database import database
 
 
-class UserManager(object):
+class UserManager(DatabaseManager):
     def __init__(self):
-        database.connect()
+        DatabaseManager.__init__(self)
         User.create_table()
 
     def get_all_user(self):
@@ -33,6 +34,3 @@ class UserManager(object):
 
     def update_user_line_token(self, user_id, line_token):
         User.set_by_id(user_id, {'line_token': line_token})
-
-    def __del__(self):
-        database.close()
