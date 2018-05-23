@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, abort
 from flask_restful import Api
 from peewee import IntegrityError, DoesNotExist
 
@@ -6,6 +6,7 @@ from Api.BookCirculationApi import BorrowApi, ReturnApi
 from Api.BookApi import BookListApi, BookApi, BookRfidApi
 from Api.UserApi import UserListApi, UserApi, UserRfidApi, UserLineApi
 import error_handler
+from Authentication import Authentication
 
 app = Flask(__name__)
 api = Api(app)
@@ -14,6 +15,15 @@ api = Api(app)
 @app.route('/')
 def hello_world():
     return 'Hello World!, this is a landing page for SmartLibrary.'
+
+
+@app.before_request
+def authenticate():
+    authen = Authentication.validate_access()
+    if authen is not False:
+        print("Logged in as: " + str(authen))
+    else:
+        abort(403)
 
 
 api.add_resource(BookListApi, '/book')
