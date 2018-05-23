@@ -8,7 +8,7 @@ user_fields = {
     'name': fields.String,
     'registered_on': fields.DateTime(dt_format='rfc822'),
     'email': fields.String,
-    'is_active': fields.Boolean,
+    'rfid': fields.Boolean,
 }
 
 
