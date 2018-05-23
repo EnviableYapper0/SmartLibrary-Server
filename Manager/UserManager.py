@@ -10,7 +10,7 @@ class UserManager(object):
     def get_all_user(self):
         user_list = []
 
-        for user in User.select():
+        for user in User.select().where(User.is_active == True):
             user_list.append(user)
 
         return user_list
@@ -19,10 +19,10 @@ class UserManager(object):
         return User.create(**json_data)
 
     def get_specific_user(self, user_id):
-        return User.get_by_id(user_id)
+        return User.get(User.user_id == user_id & User.is_active == True)
 
     def get_user_by_rfid(self, rfid):
-        return User.get(User.rfid == rfid)
+        return User.get(User.rfid == rfid & User.is_active == True)
 
     def update_user_data(self, user_id, json_data):
         if 'user_id' in json_data.keys() and json_data['user_id'] != user_id:

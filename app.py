@@ -6,6 +6,7 @@ from Api.BookCirculationApi import BorrowApi, ReturnApi
 from Api.BookApi import BookListApi, BookApi, BookRfidApi
 from Api.UserApi import UserListApi, UserApi, UserRfidApi, UserLineApi
 import error_handler
+from RuleError import RuleError
 
 app = Flask(__name__)
 api = Api(app)
@@ -29,6 +30,7 @@ api.add_resource(ReturnApi, '/return/<int:borrow_id>')
 app.register_error_handler(IntegrityError, error_handler.bad_input_handler)
 app.register_error_handler(IndexError, error_handler.index_error_handler)
 app.register_error_handler(DoesNotExist, error_handler.does_not_exist)
+app.register_error_handler(RuleError, error_handler.rule_error_handler)
 
 if __name__ == '__main__':
     app.run()
