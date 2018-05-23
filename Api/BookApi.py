@@ -8,7 +8,7 @@ book_fields = {
     'title': fields.String,
     'isbn': fields.String,
     'added_on': fields.DateTime(dt_format='rfc822'),
-    'is_available': fields.Boolean,
+    'rfid': fields.String,
     'author': fields.String,
     'publisher': fields.String,
 }
