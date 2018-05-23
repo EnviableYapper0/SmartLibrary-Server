@@ -1,6 +1,7 @@
 from threading import Thread
 
 from NotificationSender import EmailSender, LineSender
+from RuleError import RuleError
 from model import BookCirculation, Book, User
 from Database import database
 from datetime import datetime
@@ -23,7 +24,7 @@ class BookCirculationManager:
     def get_all_being_borrowed(self):
         being_borrowed = []
 
-        for book_circulation in BookCirculation.select().where(BookCirculation.return_time == None):
+        for book_circulation in BookCirculation.select().where(BookCirculation.return_time is None):
             being_borrowed.append(book_circulation)
 
         return being_borrowed
@@ -33,13 +34,23 @@ class BookCirculationManager:
 
     def borrows(self, dataList):
         successful_borrows = []
+        user = User.get_by_id(dataList[0]["user"]["user_id"])
 
         with database.atomic():
+            num_book_borrowing = BookCirculation.select().where((BookCirculation.user == user) and
+                                                                (BookCirculation.return_time is not None)).count()
+
+            if num_book_borrowing + len(dataList) > 5:
+                raise RuleError("Number is borrowing books exceeded.")
+
             for data in dataList:
                 book = Book.get_by_id(data["book"]["book_id"])
-                user = User.get_by_id(data["user"]["user_id"])
                 data['book'] = book
                 data['user'] = user
+
+                if BookCirculation.select().where((BookCirculation.book == book) &
+                                                  (BookCirculation.return_time is not None)).count() != 0:
+                    raise RuleError("The book has already been borrowed.")
 
                 successful_borrows.append(BookCirculation.create(**data))
 
