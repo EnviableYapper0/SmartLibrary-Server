@@ -5,7 +5,7 @@ class DatabaseManager(object):
     def __init__(self):
         self.db = database
         self.__opened_db_connection = not self.db.is_closed()
-        if self.__opened_db_connection:
+        if not self.__opened_db_connection:
             self.db.connect()
 
     @staticmethod
