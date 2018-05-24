@@ -40,6 +40,9 @@ class BookApi(AbstractBookApi):
         args = request.get_json()
         return self.book_manager.update_book_data(book_id, args)
 
+    def delete(self, book_id):
+        self.book_manager.mark_book_unavaliable(book_id)
+
 
 class BookRfidApi(AbstractBookApi):
     @marshal_with(book_fields)
