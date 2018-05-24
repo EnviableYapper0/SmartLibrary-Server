@@ -18,6 +18,7 @@ class Book(BaseModel):
     rfid = CharField(null=True, default=None, unique=True)
     is_available = BooleanField(default=True)
 
+
 class User(BaseModel):
     user_id = AutoField(primary_key=True, unique=True)
     name = TextField()

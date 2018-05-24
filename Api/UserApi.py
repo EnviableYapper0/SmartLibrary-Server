@@ -8,7 +8,7 @@ user_fields = {
     'name': fields.String,
     'registered_on': fields.DateTime(dt_format='rfc822'),
     'email': fields.String,
-    'is_active': fields.Boolean,
+    'rfid': fields.String,
 }
 
 
@@ -38,11 +38,19 @@ class UserApi(AbstractUserApi):
         args = request.get_json()
         return self.user_manager.update_user_data(user_id, args)
 
+    def delete(self, user_id):
+        self.user_manager.mark_user_inactive(user_id)
+
 
 class UserRfidApi(AbstractUserApi):
     @marshal_with(user_fields)
     def get(self, rfid):
         return self.user_manager.get_user_by_rfid(rfid)
+
+class UserSearchApi(AbstractUserApi):
+    @marshal_with(user_fields)
+    def get(self, keyword):
+        return self.user_manager.search(keyword)
 
 
 class UserLineApi(AbstractUserApi):
