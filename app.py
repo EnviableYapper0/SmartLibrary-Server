@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import Api
 from peewee import IntegrityError
 
-from Api.BookCirculationApi import BorrowApi, ReturnApi
+from Api.BookCirculationApi import BorrowApi, ReturnApi, BorrowHistoryApi
 from Api.BookApi import BookListApi, BookApi, BookRfidApi
 from Api.UserApi import UserListApi, UserApi, UserRfidApi, UserLineApi
 import error_handler
@@ -27,6 +27,7 @@ api.add_resource(UserLineApi, '/user/<int:user_id>/token')
 api.add_resource(UserRfidApi, '/user/rfid/<rfid>')
 api.add_resource(BorrowApi, '/borrow')
 api.add_resource(ReturnApi, '/return/<int:borrow_id>')
+api.add_resource(BorrowHistoryApi, '/history')
 
 app.register_error_handler(IntegrityError, error_handler.bad_input_handler)
 app.register_error_handler(IndexError, error_handler.index_error_handler)

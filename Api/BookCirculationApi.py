@@ -22,7 +22,7 @@ class AbstractCirculationApi(Resource):
 class BorrowApi(AbstractCirculationApi):
     @marshal_with(book_circulation_fields)
     def get(self):
-        return self.book_circulation_manager.get_complete_history()
+        return self.book_circulation_manager.get_all_being_borrowed()
 
     @marshal_with(book_circulation_fields)
     def post(self):
@@ -31,7 +31,11 @@ class BorrowApi(AbstractCirculationApi):
 
 
 class ReturnApi(AbstractCirculationApi):
+    def delete(self, borrow_id):
+        self.book_circulation_manager.return_book(borrow_id)
+
+
+class BorrowHistoryApi(AbstractCirculationApi):
     @marshal_with(book_circulation_fields)
-    def put(self, borrow_id):
-        args = request.get_json()
-        return self.book_circulation_manager.return_book(borrow_id, args['return_time'])
+    def get(self):
+        return self.book_circulation_manager.get_complete_history()

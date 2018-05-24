@@ -1,5 +1,6 @@
 from threading import Thread
 
+from Manager.DatabaseManager import DatabaseManager
 from NotificationSender import EmailSender, LineSender
 from RuleError import RuleError
 from model import BookCirculation, Book, User
@@ -7,10 +8,10 @@ from Database import database
 from datetime import datetime
 
 
-class BookCirculationManager:
+class BookCirculationManager(DatabaseManager):
 
     def __init__(self):
-        database.connect()
+        DatabaseManager.__init__(self)
         BookCirculation.create_table()
 
     def get_complete_history(self):
@@ -24,7 +25,7 @@ class BookCirculationManager:
     def get_all_being_borrowed(self):
         being_borrowed = []
 
-        for book_circulation in BookCirculation.select().where(BookCirculation.return_time is None):
+        for book_circulation in BookCirculation.select().where(BookCirculation.return_time == None):
             being_borrowed.append(book_circulation)
 
         return being_borrowed
@@ -38,7 +39,7 @@ class BookCirculationManager:
 
         with database.atomic():
             num_book_borrowing = BookCirculation.select().where((BookCirculation.user == user) &
-                                                                (BookCirculation.return_time is not None)).count()
+                                                                (BookCirculation.return_time != None)).count()
 
             if num_book_borrowing + len(data_list) > 5:
                 raise RuleError("Number is borrowing books exceeded.")
@@ -58,12 +59,8 @@ class BookCirculationManager:
 
         return successful_borrows
 
-    def return_book(self, borrow_id, return_time=datetime.now()):
-        BookCirculation.update(return_time=return_time).where(BookCirculation.borrow_id == borrow_id).execute()
-        return self.get_specific_record(borrow_id)
-
-    def __del__(self):
-        database.close()
+    def return_book(self, borrow_id:int):
+        BookCirculation.set_by_id(borrow_id, {"return_time": datetime.now()})
 
 
 class SendBorrowNotification(Thread):
