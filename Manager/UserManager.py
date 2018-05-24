@@ -20,10 +20,10 @@ class UserManager(DatabaseManager):
         return User.create(**json_data)
 
     def get_specific_user(self, user_id):
-        return User.get((User.rfid == user_id) & (User.is_active is True))
+        return User.get((User.user_id == user_id) & (User.is_active == True))
 
     def get_user_by_rfid(self, rfid):
-        return User.get((User.rfid == rfid) & (User.is_active is True))
+        return User.get((User.rfid == rfid) & (User.is_active == True))
 
     def update_user_data(self, user_id, json_data):
         if 'user_id' in json_data.keys() and json_data['user_id'] != user_id:
