@@ -19,10 +19,10 @@ class BookManager(DatabaseManager):
         return Book.create(**json_data)
 
     def get_book(self, book_id):
-        return Book.get(Book.book_id == book_id and Book.is_available == True)
+        return Book.get(Book.book_id == book_id & Book.is_available == True)
 
     def get_book_by_rfid(self, rfid):
-        return Book.get(Book.rfid == rfid and Book.is_available == True)
+        return Book.get(Book.rfid == rfid & Book.is_available == True)
 
     def mark_book_unavaliable(self, book_id):
         Book.set_by_id(book_id, {"is_available": False})
