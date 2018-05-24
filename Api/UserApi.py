@@ -38,6 +38,9 @@ class UserApi(AbstractUserApi):
         args = request.get_json()
         return self.user_manager.update_user_data(user_id, args)
 
+    def delete(self, user_id):
+        self.user_manager.mark_user_inactive(user_id)
+
 
 class UserRfidApi(AbstractUserApi):
     @marshal_with(user_fields)
