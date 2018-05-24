@@ -25,7 +25,7 @@ class BookCirculationManager(DatabaseManager):
     def get_all_being_borrowed(self):
         being_borrowed = []
 
-        for book_circulation in BookCirculation.select().where(BookCirculation.return_time == None):
+        for book_circulation in BookCirculation.select().where(BookCirculation.return_time.is_null(False)):
             being_borrowed.append(book_circulation)
 
         return being_borrowed
@@ -39,7 +39,7 @@ class BookCirculationManager(DatabaseManager):
 
         with database.atomic():
             num_book_borrowing = BookCirculation.select().where((BookCirculation.user == user) &
-                                                                (BookCirculation.return_time != None)).count()
+                                                                (BookCirculation.return_time.is_null(False))).count()
 
             if num_book_borrowing + len(data_list) > 5:
                 raise RuleError("Number is borrowing books exceeded.")
@@ -50,7 +50,7 @@ class BookCirculationManager(DatabaseManager):
                 data['user'] = user
 
                 if BookCirculation.select().where((BookCirculation.book == book) &
-                                                  (BookCirculation.return_time is not None)).count() != 0:
+                                                  (BookCirculation.return_time.is_null(False))).count() != 0:
                     raise RuleError("The book has already been borrowed.")
 
                 successful_borrows.append(BookCirculation.create(**data))
