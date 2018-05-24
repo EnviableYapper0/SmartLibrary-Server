@@ -32,18 +32,18 @@ class BookCirculationManager:
     def get_specific_record(self, borrow_id):
         return BookCirculation.get_by_id(borrow_id)
 
-    def borrows(self, dataList):
+    def borrows(self, data_list):
         successful_borrows = []
-        user = User.get_by_id(dataList[0]["user"]["user_id"])
+        user = User.get_by_id(data_list[0]["user"]["user_id"])
 
         with database.atomic():
-            num_book_borrowing = BookCirculation.select().where((BookCirculation.user == user) and
+            num_book_borrowing = BookCirculation.select().where((BookCirculation.user == user) &
                                                                 (BookCirculation.return_time is not None)).count()
 
-            if num_book_borrowing + len(dataList) > 5:
+            if num_book_borrowing + len(data_list) > 5:
                 raise RuleError("Number is borrowing books exceeded.")
 
-            for data in dataList:
+            for data in data_list:
                 book = Book.get_by_id(data["book"]["book_id"])
                 data['book'] = book
                 data['user'] = user
