@@ -11,7 +11,7 @@ class UserManager(DatabaseManager):
     def get_all_user(self):
         user_list = []
 
-        for user in User.select():
+        for user in User.select().where(User.is_active == True):
             user_list.append(user)
 
         return user_list
