@@ -47,6 +47,11 @@ class UserRfidApi(AbstractUserApi):
     def get(self, rfid):
         return self.user_manager.get_user_by_rfid(rfid)
 
+class UserSearchApi(AbstractUserApi):
+    @marshal_with(user_fields)
+    def get(self, keyword):
+        return self.user_manager.search(keyword)
+
 
 class UserLineApi(AbstractUserApi):
     def put(self, user_id):
