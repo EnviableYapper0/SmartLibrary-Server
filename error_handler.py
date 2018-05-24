@@ -14,3 +14,7 @@ def index_error_handler(error):
 
 def does_not_exist(error):
     return bad_input_handler(error, 404)
+
+
+def rule_error_handler(error):
+    return bad_input_handler(error, 403)

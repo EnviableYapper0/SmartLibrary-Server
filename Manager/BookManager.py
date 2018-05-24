@@ -10,7 +10,7 @@ class BookManager(DatabaseManager):
     def get_all_books(self):
         book_list = []
 
-        for book in Book.select():
+        for book in Book.select().where(Book.is_available == True):
             book_list.append(book)
 
         return book_list
@@ -19,10 +19,10 @@ class BookManager(DatabaseManager):
         return Book.create(**json_data)
 
     def get_book(self, book_id):
-        return Book.get_by_id(book_id)
+        return Book.get(Book.book_id == book_id & Book.is_available == True)
 
     def get_book_by_rfid(self, rfid):
-        return Book.get(Book.rfid == rfid)
+        return Book.get(Book.rfid == rfid & Book.is_available == True)
 
     def mark_book_unavaliable(self, book_id):
         Book.set_by_id(book_id, {"is_available": False})

@@ -1,15 +1,16 @@
 from threading import Thread
 
-from Manager.DatabaseManager import DatabaseManager
 from NotificationSender import EmailSender, LineSender
+from RuleError import RuleError
 from model import BookCirculation, Book, User
+from Database import database
 from datetime import datetime
 
 
-class BookCirculationManager(DatabaseManager):
+class BookCirculationManager:
 
     def __init__(self):
-        DatabaseManager.__init__(self)
+        database.connect()
         BookCirculation.create_table()
 
     def get_complete_history(self):
@@ -23,7 +24,7 @@ class BookCirculationManager(DatabaseManager):
     def get_all_being_borrowed(self):
         being_borrowed = []
 
-        for book_circulation in BookCirculation.select().where(BookCirculation.return_time == None):
+        for book_circulation in BookCirculation.select().where(BookCirculation.return_time is None):
             being_borrowed.append(book_circulation)
 
         return being_borrowed
@@ -33,13 +34,23 @@ class BookCirculationManager(DatabaseManager):
 
     def borrows(self, dataList):
         successful_borrows = []
+        user = User.get_by_id(dataList[0]["user"]["user_id"])
 
-        with self.db.atomic():
+        with database.atomic():
+            num_book_borrowing = BookCirculation.select().where((BookCirculation.user == user) and
+                                                                (BookCirculation.return_time is not None)).count()
+
+            if num_book_borrowing + len(dataList) > 5:
+                raise RuleError("Number is borrowing books exceeded.")
+
             for data in dataList:
                 book = Book.get_by_id(data["book"]["book_id"])
-                user = User.get_by_id(data["user"]["user_id"])
                 data['book'] = book
                 data['user'] = user
+
+                if BookCirculation.select().where((BookCirculation.book == book) &
+                                                  (BookCirculation.return_time is not None)).count() != 0:
+                    raise RuleError("The book has already been borrowed.")
 
                 successful_borrows.append(BookCirculation.create(**data))
 
@@ -50,6 +61,9 @@ class BookCirculationManager(DatabaseManager):
     def return_book(self, borrow_id, return_time=datetime.now()):
         BookCirculation.update(return_time=return_time).where(BookCirculation.borrow_id == borrow_id).execute()
         return self.get_specific_record(borrow_id)
+
+    def __del__(self):
+        database.close()
 
 
 class SendBorrowNotification(Thread):
