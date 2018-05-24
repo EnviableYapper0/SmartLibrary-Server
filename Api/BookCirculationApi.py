@@ -39,3 +39,15 @@ class BorrowHistoryApi(AbstractCirculationApi):
     @marshal_with(book_circulation_fields)
     def get(self):
         return self.book_circulation_manager.get_complete_history()
+
+
+class BorrowSearchApi(AbstractCirculationApi):
+    @marshal_with(book_circulation_fields)
+    def get(self, keyword):
+        return self.book_circulation_manager.search_borrowing(keyword)
+
+
+class HistorySearchApi(AbstractCirculationApi):
+    @marshal_with(book_circulation_fields)
+    def get(self, keyword):
+        return self.book_circulation_manager.search_history(keyword)

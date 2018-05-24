@@ -1,6 +1,5 @@
 from Manager.DatabaseManager import DatabaseManager
 from model import User
-from Database import database
 
 
 class UserManager(DatabaseManager):
@@ -9,12 +8,9 @@ class UserManager(DatabaseManager):
         User.create_table()
 
     def get_all_user(self):
-        user_list = []
-
-        for user in User.select().where(User.is_active == True):
-            user_list.append(user)
-
-        return user_list
+        return DatabaseManager.get_list(
+            User.select().where(User.is_active == True)
+        )
 
     def register_new_user(self, json_data):
         return User.create(**json_data)
@@ -33,12 +29,9 @@ class UserManager(DatabaseManager):
         return self.get_specific_user(user_id)
 
     def search(self, keyword):
-        user_list = []
-
-        for user in User.select().where((User.name.contains(keyword)) & (User.is_active == True)):
-            user_list.append(user)
-
-        return user_list
+        return DatabaseManager.get_list(
+            User.select().where((User.name.contains(keyword)) & (User.is_active == True))
+        )
 
     def mark_user_inactive(self, user_id):
         User.set_by_id(user_id, {"is_active": False})

@@ -2,9 +2,9 @@ from flask import Flask
 from flask_restful import Api
 from peewee import IntegrityError
 
-from Api.BookCirculationApi import BorrowApi, ReturnApi, BorrowHistoryApi
-from Api.BookApi import BookListApi, BookApi, BookRfidApi, BookSearchApi
-from Api.UserApi import UserListApi, UserApi, UserRfidApi, UserLineApi, UserSearchApi
+from Api.BookCirculationApi import *
+from Api.BookApi import *
+from Api.UserApi import *
 import error_handler
 from peewee import DoesNotExist
 from RuleError import RuleError
@@ -32,6 +32,8 @@ api.add_resource(UserSearchApi, '/user/search/<keyword>')
 api.add_resource(BorrowApi, '/borrow')
 api.add_resource(ReturnApi, '/return/<int:borrow_id>')
 api.add_resource(BorrowHistoryApi, '/history')
+api.add_resource(BorrowSearchApi, '/borrow/search/<keyword>')
+api.add_resource(HistorySearchApi, '/history/search/<keyword>')
 
 app.register_error_handler(IntegrityError, error_handler.bad_input_handler)
 app.register_error_handler(IndexError, error_handler.index_error_handler)
