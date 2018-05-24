@@ -48,3 +48,9 @@ class BookRfidApi(AbstractBookApi):
     @marshal_with(book_fields)
     def get(self, rfid):
         return self.book_manager.get_book_by_rfid(rfid)
+
+
+class BookSearchApi(AbstractBookApi):
+    @marshal_with(book_fields)
+    def get(self, keyword):
+        return self.book_manager.search(keyword)

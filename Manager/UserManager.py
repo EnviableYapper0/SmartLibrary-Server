@@ -32,6 +32,14 @@ class UserManager(DatabaseManager):
         User.set_by_id(user_id, json_data)
         return self.get_specific_user(user_id)
 
+    def search(self, keyword):
+        user_list = []
+
+        for user in User.select().where((User.name.contains(keyword)) & (User.is_active == True)):
+            user_list.append(user)
+
+        return user_list
+
     def mark_user_inactive(self, user_id):
         User.set_by_id(user_id, {"is_active": False})
 
