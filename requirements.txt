@@ -2,3 +2,4 @@ Flask==1.0.2
 peewee==3.4.0
 flask-restful==0.3.6
 requests==2.18.4
+psycopg2==2.7.4
