@@ -19,10 +19,10 @@ class BookManager(object):
         return Book.create(**json_data)
 
     def get_book(self, book_id):
-        return Book.get(Book.book_id == book_id and Book.is_available == True)
+        return Book.get(Book.book_id == book_id & Book.is_available == True)
 
     def get_book_by_rfid(self, rfid):
-        return Book.get(Book.rfid == rfid and Book.is_available == True)
+        return Book.get(Book.rfid == rfid & Book.is_available == True)
 
     def update_book_data(self, book_id, json_data):
         if 'book_id' in json_data.keys() and json_data['book_id'] != book_id:
