@@ -15,11 +15,11 @@ class BookCirculationManager(DatabaseManager):
         BookCirculation.create_table()
 
     def get_complete_history(self):
-        return DatabaseManager.get_list(BookCirculation.select().join(User, Book))
+        return DatabaseManager.get_list(BookCirculation.select())
 
     def get_all_being_borrowed(self):
         return DatabaseManager.get_list(
-            BookCirculation.select().join(User, Book).where(BookCirculation.return_time.is_null(True))
+            BookCirculation.select().where(BookCirculation.return_time.is_null(True))
         )
 
     def get_specific_record(self, borrow_id):
@@ -51,23 +51,23 @@ class BookCirculationManager(DatabaseManager):
 
         return successful_borrows
 
-    def __search_user(self, keyword:str):
+    def __search_user(self, keyword: str):
         return User.select().where((User.name.contains(keyword)) & (User.is_active == True))
 
-    def __search_book(self, keyword:str):
+    def __search_book(self, keyword: str):
         return Book.select().where((Book.title.contains(keyword)) & (Book.is_available == True))
 
-    def search_borrowing(self, keyword:str):
+    def search_borrowing(self, keyword: str):
         user_query = self.__search_user(keyword)
         book_query = self.__search_book(keyword)
 
         return DatabaseManager.get_list(
-            BookCirculation.select().join(User, Book).where(((BookCirculation.user << user_query) |
-                                                             (BookCirculation.book << book_query)) &
-                                                            BookCirculation.return_time.is_null(True))
+            BookCirculation.select().where(((BookCirculation.user << user_query) |
+                                            (BookCirculation.book << book_query)) &
+                                           BookCirculation.return_time.is_null(True))
         )
 
-    def search_history(self, keyword:str):
+    def search_history(self, keyword: str):
         user_query = self.__search_user(keyword)
         book_query = self.__search_book(keyword)
 
@@ -75,8 +75,7 @@ class BookCirculationManager(DatabaseManager):
             BookCirculation.select().where((BookCirculation.user << user_query) | (BookCirculation.book << book_query))
         )
 
-
-    def return_book(self, borrow_id:int):
+    def return_book(self, borrow_id: int):
         BookCirculation.set_by_id(borrow_id, {"return_time": datetime.now()})
 
 
