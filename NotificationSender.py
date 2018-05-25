@@ -3,6 +3,8 @@ import requests
 from email.message import EmailMessage
 from smtplib import SMTP
 
+from model import *
+
 LINE_NOTIFY_URL = 'https://notify-api.line.me/api/notify'
 
 
@@ -36,17 +38,17 @@ class NotificationSender(metaclass=abc.ABCMeta):
             to_compose[book_circulation.user].append(book_circulation)
 
         messages_to_send = {}
-        for user, book_circulation_list in to_compose:
-            message_content = NotificationSender.get_header(user.name) + "You have yet to return the following book(s):"
+        for user, book_circulation_list in to_compose.items():
+            message_content = NotificationSender.get_header(user.name) + \
+                              "You have yet to return the following book(s):\n"
             for book_circulation in book_circulation_list:
                 message_content += (book_circulation.book.title + ", due: " + str(book_circulation.due_time))
 
                 if datetime.now() > book_circulation.due_time:
                     message_content += " (Overdue)"
 
-                message_content += "\n"
+                message_content += "\nYou can return the book by contacting the library's librarian.\n"
 
-            message_content = "You may extend the borrowing period at the kiosk."
             message_content = NotificationSender.write_end(message_content)
 
             messages_to_send[user] = message_content
@@ -83,12 +85,14 @@ class EmailSender(NotificationSender):
         self.smtp.send_message(msg)
 
     def notify_book_in_circulation(self):
+        users_with_email = User.select().where(User.email.is_null(False) & (User.is_active == True))
+
         query = BookCirculation.select().group_by(BookCirculation.user).\
-            having((BookCirculation.user.email.is_null(False)) | (BookCirculation.return_time.is_null(True)))
+            having((BookCirculation.user << users_with_email) & BookCirculation.return_time.is_null(True))
 
         emails_to_compose = NotificationSender.compose_book_in_circulation(query)
 
-        for user, email_content in emails_to_compose:
+        for user, email_content in emails_to_compose.items():
             msg = EmailMessage()
             msg.set_content(email_content)
             msg['Subject'] = "Notification of books yet to be returned"
@@ -112,12 +116,14 @@ class LineSender(NotificationSender):
         self.send_line_message(user.line_token, self.compose_successful_book_borrow(new_borrows))
 
     def notify_book_in_circulation(self):
+        users_with_line = User.select().where(User.line_token.is_null(False) & (User.is_active == True))
+
         query = BookCirculation.select().group_by(BookCirculation.user). \
-            having((BookCirculation.user.line_token.is_null(False)) | (BookCirculation.return_time.is_null(True)))
+            having((BookCirculation.user << users_with_line) & BookCirculation.return_time.is_null(True))
 
         messages_to_send = NotificationSender.compose_book_in_circulation(query)
 
-        for user, message in messages_to_send:
+        for user, message in messages_to_send.items():
             self.send_line_message(user.line_token, message)
 
     @staticmethod
@@ -126,17 +132,13 @@ class LineSender(NotificationSender):
         requests.post(LINE_NOTIFY_URL, headers=headers, data={'message': message})
 
 
+def send_not_returned_notification():
+    EmailSender().notify_book_in_circulation()
+    LineSender().notify_book_in_circulation()
+
+    # avoid importing jsonify for just one return
+    return "{ \"message\": \"Send completed\" }"
+
+
 if __name__ == '__main__':
-    from model import *
-    book1 = Book(id=1, title="Windows 10 Plain & Simple, 2nd Edition", isbn="978-1-5093-0673-2")
-    book2 = Book(id=2, title="Beyond Bullet Points: Using PowerPoint to tell a compelling story that gets results, "
-                             "4th Edition", isbn="978-1-5093-0553-7")
-    user1 = User(id=1, name="John Doe", email="johndoe@awsomejoe.com",
-                 line_token="ycrnAC5g1ekyjeF925i0gNbZQMuZWQ2MkIjIEzYBsZ3")
-
-    book_circulations = [BookCirculation(book=book1, user=user1), BookCirculation(book=book2, user=user1)]
-
-    email_sender = EmailSender()
-    line_sender = LineSender()
-    email_sender.notify_successful_book_borrows(book_circulations)
-    line_sender.notify_successful_book_borrows(book_circulations)
+    send_not_returned_notification()
