@@ -2,7 +2,7 @@ from threading import Thread
 
 from Manager.DatabaseManager import DatabaseManager
 from NotificationSender import EmailSender, LineSender
-from RuleError import RuleError
+from ErrorHandling.RuleError import *
 from model import BookCirculation, Book, User
 from Database import database
 from datetime import datetime
@@ -34,7 +34,7 @@ class BookCirculationManager(DatabaseManager):
                                                                 (BookCirculation.return_time.is_null(True))).count()
 
             if num_book_borrowing + len(data_list) > 5:
-                raise RuleError("Number is borrowing books exceeded.")
+                raise BorrowingExceededError()
 
             for data in data_list:
                 book = Book.get_by_id(data["book"]["book_id"])
@@ -43,7 +43,7 @@ class BookCirculationManager(DatabaseManager):
 
                 if BookCirculation.select().where((BookCirculation.book == book) &
                                                   (BookCirculation.return_time.is_null(True))).count() != 0:
-                    raise RuleError("The book has already been borrowed.")
+                    raise AlreadyBorrowedError()
 
                 successful_borrows.append(BookCirculation.create(**data))
 
