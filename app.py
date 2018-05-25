@@ -5,12 +5,12 @@ from peewee import IntegrityError
 from Api.BookCirculationApi import *
 from Api.BookApi import *
 from Api.UserApi import *
-import error_handler
+from ErrorHandling import error_handler
 from peewee import DoesNotExist
-from RuleError import RuleError
+from ErrorHandling.RuleError import RuleError
 
 app = Flask(__name__)
-api = Api(app)
+api = Api(app, catch_all_404s=True)
 
 
 @app.route('/')
@@ -35,10 +35,14 @@ api.add_resource(BorrowHistoryApi, '/history')
 api.add_resource(BorrowSearchApi, '/borrow/search/<keyword>')
 api.add_resource(HistorySearchApi, '/history/search/<keyword>')
 
-app.register_error_handler(IntegrityError, error_handler.bad_input_handler)
+# Workaround to prevent flask-restful from taking over
+app.config['PROPAGATE_EXCEPTIONS'] = True
+
+app.register_error_handler(IntegrityError, error_handler.error_handler)
 app.register_error_handler(IndexError, error_handler.index_error_handler)
 app.register_error_handler(DoesNotExist, error_handler.does_not_exist)
 app.register_error_handler(RuleError, error_handler.rule_error_handler)
+app.register_error_handler(Exception, error_handler.custom_message_error_handler)
 
 if __name__ == '__main__':
     app.run()
