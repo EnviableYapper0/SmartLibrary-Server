@@ -23,7 +23,7 @@ def authenticate():
     if authen is not False:
         print("Logged in as: " + str(authen))
     else:
-        abort(403)
+        abort(401)
 
 
 api.add_resource(BookListApi, '/book')
