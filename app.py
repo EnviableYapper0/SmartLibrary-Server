@@ -20,9 +20,7 @@ def hello_world():
 @app.before_request
 def authenticate():
     authen = Authentication.validate_access()
-    if authen is not False:
-        print("Logged in as: " + str(authen))
-    else:
+    if authen is False:
         abort(401)
 
 
