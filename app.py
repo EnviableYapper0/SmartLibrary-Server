@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, abort
 from flask_restful import Api
 from peewee import IntegrityError
 
@@ -8,6 +8,7 @@ from Api.UserApi import *
 from ErrorHandling import error_handler
 from peewee import DoesNotExist
 from ErrorHandling.RuleError import RuleError
+from Authentication import Authentication
 
 app = Flask(__name__)
 api = Api(app, catch_all_404s=True)
@@ -16,6 +17,13 @@ api = Api(app, catch_all_404s=True)
 @app.route('/')
 def hello_world():
     return 'Hello World!, this is a landing page for SmartLibrary.'
+
+
+@app.before_request
+def authenticate():
+    authen = Authentication.validate_access()
+    if not authen:
+        abort(401)
 
 
 api.add_resource(BookListApi, '/book')
