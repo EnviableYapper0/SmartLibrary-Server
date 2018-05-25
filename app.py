@@ -5,9 +5,9 @@ from peewee import IntegrityError
 from Api.BookCirculationApi import *
 from Api.BookApi import *
 from Api.UserApi import *
-import error_handler
-from peewee import DoesNotExist, PeeweeException
-from RuleError import RuleError
+from ErrorHandling import error_handler
+from peewee import DoesNotExist
+from ErrorHandling.RuleError import RuleError
 
 app = Flask(__name__)
 api = Api(app, catch_all_404s=True)

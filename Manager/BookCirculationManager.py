@@ -2,7 +2,7 @@ from threading import Thread
 
 from Manager.DatabaseManager import DatabaseManager
 from NotificationSender import EmailSender, LineSender
-from RuleError import *
+from ErrorHandling.RuleError import *
 from model import BookCirculation, Book, User
 from Database import database
 from datetime import datetime
