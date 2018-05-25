@@ -39,7 +39,7 @@ app.register_error_handler(IntegrityError, error_handler.error_handler)
 app.register_error_handler(IndexError, error_handler.index_error_handler)
 app.register_error_handler(DoesNotExist, error_handler.does_not_exist)
 app.register_error_handler(RuleError, error_handler.rule_error_handler)
-app.register_error_handler(PeeweeException, error_handler.error_handler)
+app.register_error_handler(PeeweeException, error_handler.peewee_error_handler)
 
 if __name__ == '__main__':
     app.run()
