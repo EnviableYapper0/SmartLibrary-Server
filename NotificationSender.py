@@ -84,7 +84,7 @@ class EmailSender(NotificationSender):
 
     def notify_book_in_circulation(self):
         query = BookCirculation.select().group_by(BookCirculation.user).\
-            having((BookCirculation.user.email is not None) | (BookCirculation.return_time is None))
+            having((BookCirculation.user.email.is_null(False)) | (BookCirculation.return_time.is_null(True)))
 
         emails_to_compose = NotificationSender.compose_book_in_circulation(query)
 
@@ -113,7 +113,7 @@ class LineSender(NotificationSender):
 
     def notify_book_in_circulation(self):
         query = BookCirculation.select().group_by(BookCirculation.user). \
-            having((BookCirculation.user.line_token is not None) | (BookCirculation.return_time is None))
+            having((BookCirculation.user.line_token.is_null(False)) | (BookCirculation.return_time.is_null(True)))
 
         messages_to_send = NotificationSender.compose_book_in_circulation(query)
 
