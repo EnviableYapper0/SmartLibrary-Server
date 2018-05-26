@@ -2,6 +2,9 @@ import abc
 import requests
 from email.message import EmailMessage
 from smtplib import SMTP
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+import atexit
 
 from model import *
 
@@ -138,6 +141,19 @@ def send_not_returned_notification():
 
     # avoid importing jsonify for just one return
     return "{ \"message\": \"Send completed\" }"
+
+
+def register_scheduler():
+    scheduler = BackgroundScheduler()
+    scheduler.start()
+    scheduler.add_job(
+        func=send_not_returned_notification,
+        trigger=CronTrigger(hour=0, minute=0, second=0), # Run on midnight on every day.
+        id='not_returned_notification',
+        name='Send Notification for books that were being borrowed.',
+        replace_existing=True)
+    # Shut down the scheduler when exiting the app
+    atexit.register(lambda: scheduler.shutdown())
 
 
 if __name__ == '__main__':

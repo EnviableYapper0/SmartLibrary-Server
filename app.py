@@ -8,7 +8,7 @@ from Api.UserApi import *
 from ErrorHandling import error_handler
 from peewee import DoesNotExist
 from ErrorHandling.RuleError import RuleError
-from NotificationSender import send_not_returned_notification
+from NotificationSender import send_not_returned_notification, register_scheduler
 
 app = Flask(__name__)
 api = Api(app, catch_all_404s=True)
@@ -45,8 +45,9 @@ app.register_error_handler(DoesNotExist, error_handler.does_not_exist)
 app.register_error_handler(RuleError, error_handler.rule_error_handler)
 app.register_error_handler(Exception, error_handler.custom_message_error_handler)
 
-
 app.add_url_rule('/manual_notification', 'send_not_returned_notification', send_not_returned_notification)
+
+register_scheduler()
 
 
 if __name__ == '__main__':
