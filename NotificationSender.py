@@ -5,6 +5,7 @@ from smtplib import SMTP
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import atexit
+import os
 
 from model import *
 
@@ -71,8 +72,13 @@ class EmailSender(NotificationSender):
 
     def __init__(self):
         NotificationSender.__init__(self)
-        self.smtp = SMTP(host='smtp.mailtrap.io', port=2525)
-        self.smtp.login('3f534eda171e91', '3ab5f8fea23d28')
+
+        host = os.environ["SMTP_HOST"]
+        user = os.environ["SMTP_USER"]
+        password = os.environ["SMTP_PASS"]
+
+        self.smtp = SMTP(host=host)
+        self.smtp.login(user=user, password=password)
 
     def notify_successful_book_borrows(self, new_borrows):
         user = new_borrows[0].user
