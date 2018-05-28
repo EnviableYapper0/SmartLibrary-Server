@@ -46,7 +46,9 @@ class NotificationSender(metaclass=abc.ABCMeta):
             message_content = NotificationSender.get_header(user.name) + \
                               "You have yet to return the following book(s):\n"
             for book_circulation in book_circulation_list:
-                message_content += (book_circulation.book.title + ", due: " + str(book_circulation.due_time))
+                due_time_str = str(book_circulation.due_time).split('.')[0]
+
+                message_content += (book_circulation.book.title + ", due: " + due_time_str)
 
                 if datetime.now() > book_circulation.due_time:
                     message_content += " (Overdue)"
