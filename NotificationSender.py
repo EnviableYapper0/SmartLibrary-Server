@@ -53,7 +53,7 @@ class NotificationSender(metaclass=abc.ABCMeta):
                 if datetime.now() > book_circulation.due_time:
                     message_content += " (Overdue)"
 
-                message_content += "\nYou can return the book by contacting the library's librarian.\n"
+            message_content += "\nYou can return the book by contacting the library's librarian.\n"
 
             message_content = NotificationSender.write_end(message_content)
 
@@ -98,8 +98,8 @@ class EmailSender(NotificationSender):
     def notify_book_in_circulation(self):
         users_with_email = User.select().where(User.email.is_null(False) & (User.is_active == True))
 
-        query = BookCirculation.select().group_by(BookCirculation.user).\
-            having((BookCirculation.user << users_with_email) & BookCirculation.return_time.is_null(True))
+        query = BookCirculation.select().\
+            where((BookCirculation.user << users_with_email) & BookCirculation.return_time.is_null(True))
 
         emails_to_compose = NotificationSender.compose_book_in_circulation(query)
 
@@ -129,8 +129,8 @@ class LineSender(NotificationSender):
     def notify_book_in_circulation(self):
         users_with_line = User.select().where(User.line_token.is_null(False) & (User.is_active == True))
 
-        query = BookCirculation.select().group_by(BookCirculation.user). \
-            having((BookCirculation.user << users_with_line) & BookCirculation.return_time.is_null(True))
+        query = BookCirculation.select()\
+            .where((BookCirculation.user << users_with_line) & BookCirculation.return_time.is_null(True))
 
         messages_to_send = NotificationSender.compose_book_in_circulation(query)
 
